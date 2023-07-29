@@ -1,0 +1,24 @@
+{
+  "name": "parse5-to-json",
+  "version": "0.0.1-alpha.1",
+  "description": "",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "vitest",
+    "test:update": "vitest --update",
+    "build": "tsup",
+    "dev": "tsup --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/json-stringify-safe": "5.0.0",
+    "camelcase": "7.0.1",
+    "json-stringify-safe": "5.0.1",
+    "parse5": "7.1.2",
+    "snake-case": "3.0.4",
+    "tsup": "7.1.0",
+    "vitest": "0.33.0"
+  }
+}

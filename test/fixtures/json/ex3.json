@@ -1,0 +1,126 @@
+{
+  "type": "doc",
+  "content": [
+    {
+      "type": "note",
+      "content": [
+        {
+          "type": "text",
+          "text": "\n  "
+        },
+        {
+          "type": "note_title",
+          "content": [
+            {
+              "type": "note_title_text",
+              "content": [],
+              "attrs": {}
+            }
+          ],
+          "attrs": {}
+        },
+        {
+          "type": "text",
+          "text": "\n  "
+        },
+        {
+          "type": "note_content",
+          "content": [
+            {
+              "type": "text",
+              "text": "内容"
+            }
+          ],
+          "attrs": {}
+        },
+        {
+          "type": "text",
+          "text": "\n"
+        }
+      ],
+      "attrs": {
+        "type": "info",
+        "hiddenTitle": true,
+        "textAlign": " center"
+      }
+    },
+    {
+      "type": "text",
+      "text": "\n"
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "text": "\n  "
+        },
+        {
+          "type": "status",
+          "content": [
+            {
+              "type": "text",
+              "text": "状态"
+            }
+          ],
+          "attrs": {
+            "pattern": "fill",
+            "color": "#1890ff"
+          }
+        },
+        {
+          "type": "text",
+          "text": "\n"
+        }
+      ],
+      "attrs": {
+        "textAlign": " center"
+      }
+    },
+    {
+      "type": "text",
+      "text": "\n\n  "
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "text": "内容"
+        }
+      ],
+      "attrs": {}
+    },
+    {
+      "type": "text",
+      "text": "\n\n"
+    },
+    {
+      "type": "mention",
+      "content": [
+        {
+          "type": "text",
+          "text": "@"
+        },
+        {
+          "type": "strong",
+          "content": [
+            {
+              "type": "text",
+              "text": "用户"
+            }
+          ],
+          "attrs": {}
+        }
+      ],
+      "attrs": {
+        "type": "ct-mention",
+        "uid": "uid"
+      }
+    },
+    {
+      "type": "text",
+      "text": "\n"
+    }
+  ]
+}

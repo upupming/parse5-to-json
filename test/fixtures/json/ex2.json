@@ -1,0 +1,37 @@
+{
+  "type": "doc",
+  "content": [
+    {
+      "type": "text",
+      "text": "\n\n\n\n\n    "
+    },
+    {
+      "type": "heading",
+      "content": [
+        {
+          "type": "text",
+          "text": "My First Heading"
+        }
+      ],
+      "attrs": {}
+    },
+    {
+      "type": "text",
+      "text": "\n    "
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "text": "My first paragraph."
+        }
+      ],
+      "attrs": {}
+    },
+    {
+      "type": "text",
+      "text": "\n\n\n\n"
+    }
+  ]
+}
