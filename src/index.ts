@@ -86,7 +86,7 @@ export function ast2CustomizedJson(ast: any): any {
 
     return {
       type: type || nodeName2Type[ast.nodeName],
-      content: ast.childNodes.map(ast2CustomizedJson),
+      content: ast.childNodes.map(ast2CustomizedJson).filter(Boolean),
       attrs
     }
   }
