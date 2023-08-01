@@ -33,7 +33,7 @@ export const nodeName2Type = {
   'th': 'table_header',
   'td': 'table_cell',
   'div': 'paragraph',
-  'span': 'text',
+  'span': 'span',
   'b': 'strong',
   'i': 'em',
   'u': 'underline',
@@ -44,6 +44,30 @@ export const nodeName2Type = {
   'center': 'paragraph'
 } as Record<string, string>
 
+export function toString(node:any): string {
+  if (!node) return ''
+  if (node.type === 'text') return node.text
+  if (!node.content) {
+    return ''
+  }
+  return node.content.map(toString).join('')
+}
+
+export const convertStringToAppropriateType = (value: string) => {
+  if (value === 'true') return true
+  if (value === 'false') return false
+  if (value === 'null') return null
+  if (value === 'undefined') return undefined
+  if (value === '') return undefined
+  if (value === 'NaN') return NaN
+  if (value === 'Infinity') return Infinity
+  if (value === '-Infinity') return -Infinity
+  // if is number
+  if (!Number.isNaN(Number(value))) return Number(value)
+  return value
+}
+
+
 export function ast2CustomizedJson(ast: any): any {
   if (ast.nodeName === '#document' || ast.nodeName === '#document-fragment') {
     return {
@@ -51,6 +75,8 @@ export function ast2CustomizedJson(ast: any): any {
       content: ast.childNodes.map(ast2CustomizedJson).filter(Boolean),
     }
   } else if (ast.nodeName === '#text') {
+    if (ast.value.trim() === '') return null
+
     return {
       type: 'text',
       text: ast.value,
@@ -58,11 +84,23 @@ export function ast2CustomizedJson(ast: any): any {
   } else if (ast.nodeName === '#comment') {
     return null
   } else {
-    let attrs: Record<string, string | boolean> = {}
+
+    let attrs: Record<string, string | boolean | number | number[]> = {}
     let type = null
+    let marks: any[] = []
     ast.attrs.forEach((attr: Attribute) => {
       if (attr.name.startsWith('data-')) {
-        attrs[camelCase(attr.name.slice(5))] = attr.value || true
+        switch (attr.name) {
+          case 'data-borderwidth':
+            attrs.borderWidth = Number(attr.value)
+            break
+          case 'data-colwidth':
+            attrs.colwidth = attr.value.split(',').map((v: string) => Number(v))
+            break
+          default:
+            attrs[camelCase(attr.name.slice(5))] = convertStringToAppropriateType(attr.value) || true
+        }
+
       } else {
         // 类名
         if (attr.name === 'class') {
@@ -78,17 +116,63 @@ export function ast2CustomizedJson(ast: any): any {
           const styles = attr.value.split(';')
           styles.forEach((style: string) => {
             const [key, value] = style.split(':')
-            attrs[camelCase(key)] = value
+            switch (key) {
+              case 'color':
+                marks.push({
+                  type: 'color',
+                  attrs: {
+                    color: value,
+                  },
+                })
+                break
+              default:
+                attrs[camelCase(key)] = value
+            }
           })
+        } else if (attr.name === 'colspan') {
+          attrs.colspan = Number(attr.value)
+        } else if (attr.name === 'rowspan') {
+          attrs.rowspan = Number(attr.value)
         }
       }
     })
 
-    return {
-      type: type || nodeName2Type[ast.nodeName],
-      content: ast.childNodes.map(ast2CustomizedJson).filter(Boolean),
-      attrs
+    // 如果是 heading，需要根据 level 设置 attrs
+    if (ast.nodeName.startsWith('h') && Number.isInteger(Number(ast.nodeName.slice(1)))) {
+      attrs.level = Number(ast.nodeName.slice(1))
     }
+
+    let ans: any = {
+      type: type || nodeName2Type[ast.nodeName],
+      attrs,
+      content: ast.childNodes.map(ast2CustomizedJson).filter(Boolean),
+    }
+    if (marks.length) ans.marks = marks
+
+    if (ast.nodeName === 'span') {
+      ans.text = toString(ans)
+      ans.type = 'text'
+      // console.log(ans, ans.text)
+      delete ans.content
+      if (!ans.text) return null
+    }
+
+    let new_content: any[] = []
+    if (ans?.content?.length) {
+      for (let i = 0; i < ans.content.length; i++) {
+        if (ans.content[i].type === 'table_body') {
+          new_content.push(...ans.content[i].content)
+        } else {
+          new_content.push(ans.content[i])
+        }
+      }
+      ans.content = new_content
+    } else {
+      delete ans.content
+    }
+
+
+    return ans
   }
 }
 

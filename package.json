@@ -2,7 +2,7 @@
   "name": "parse5-to-json",
   "version": "0.0.1-alpha.2",
   "description": "",
-  "main": "lib/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "vitest",
     "test:update": "vitest --update",
@@ -19,6 +19,7 @@
     "parse5": "7.1.2",
     "snake-case": "3.0.4",
     "tsup": "7.1.0",
+    "typescript": "5.1.6",
     "vitest": "0.33.0"
   }
 }
