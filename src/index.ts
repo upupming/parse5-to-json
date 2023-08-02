@@ -207,6 +207,9 @@ export function ast2CustomizedJson(ast: any): any {
       ans.attrs.colspan ??= 1
       ans.attrs.rowspan ??= 1
       ans.attrs.colwidth ??= [0]
+    } else if (ans.type === 'strong') {
+      ans = ans.content[0]
+      ans.marks = [{ type: 'strong' }]
     }
 
     return ans
