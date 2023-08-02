@@ -98,7 +98,8 @@ export function ast2CustomizedJson(ast: any): any {
             attrs.colwidth = attr.value.split(',').map((v: string) => Number(v))
             break
           default:
-            attrs[camelCase(attr.name.slice(5))] = convertStringToAppropriateType(attr.value) || true
+            let tmp = convertStringToAppropriateType(attr.value)
+            attrs[camelCase(attr.name.slice(5))] = (typeof tmp === 'string' ? (tmp.trim() ? tmp : true) : tmp) ?? true
         }
 
       } else {
@@ -133,6 +134,8 @@ export function ast2CustomizedJson(ast: any): any {
           attrs.colspan = Number(attr.value)
         } else if (attr.name === 'rowspan') {
           attrs.rowspan = Number(attr.value)
+        } else if (attr.name === 'href' || attr.name === 'title' || attr.name === 'id') {
+          attrs[attr.name] = attr.value
         }
       }
     })
@@ -149,10 +152,9 @@ export function ast2CustomizedJson(ast: any): any {
     }
     if (marks.length) ans.marks = marks
 
-    if (ast.nodeName === 'span') {
+    if (ans.type === 'span') {
       ans.text = toString(ans)
       ans.type = 'text'
-      // console.log(ans, ans.text)
       delete ans.content
       if (!ans.text) return null
     }
@@ -171,6 +173,41 @@ export function ast2CustomizedJson(ast: any): any {
       delete ans.content
     }
 
+    if ((ans.type === 'table_cell' || ans.type === 'table_header' || ans.type === 'collapse_content' || ans.type === 'list_item')) {
+      if (!ans.content) {
+        ans.content = [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "content": []
+          }
+        ]
+      } else {
+        for (let i = 0; i < ans.content.length; i++) {
+          const child = ans.content[i]
+          // 按照规范必须包一层 paragraph（collapse/table 除外），没包的话我们主动生成下
+          if (child.type !== 'paragraph' && child.type !== 'collapse' && child.type !== 'table') {
+            ans.content[i] = {
+              "type": "paragraph",
+              "attrs": {},
+              "content": [child]
+            }
+          }
+        }
+      }
+
+    } else if (ans.type === 'link') {
+      ans.attrs ??= []
+      ans.attrs.title = ans.attrs.title || ans.content?.[0]?.text
+    }
+
+
+    if ((ans.type === 'table_cell' || ans.type === 'table_header')) {
+      ans.attrs ??= {}
+      ans.attrs.colspan ??= 1
+      ans.attrs.rowspan ??= 1
+      ans.attrs.colwidth ??= [0]
+    }
 
     return ans
   }
