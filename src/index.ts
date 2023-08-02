@@ -2,6 +2,7 @@ import { parseFragment, html } from 'parse5'
 import { Attribute } from 'parse5/dist/common/token'
 import camelCase from 'camelcase';
 import { snakeCase } from "snake-case";
+import { uuid as uuidv4 } from 'uuidv4';
 
 export const nodeName2Type = {
   '#document': 'doc',
@@ -143,6 +144,7 @@ export function ast2CustomizedJson(ast: any): any {
     // 如果是 heading，需要根据 level 设置 attrs
     if (ast.nodeName.startsWith('h') && Number.isInteger(Number(ast.nodeName.slice(1)))) {
       attrs.level = Number(ast.nodeName.slice(1))
+      attrs.id = attrs.id || uuidv4()
     }
 
     let ans: any = {
